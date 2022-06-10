@@ -29,6 +29,15 @@ public class Analyst {
 	@Column
 	private String idCorporate;
 	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
 	@Column 
 	private String password;
 	

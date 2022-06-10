@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,10 +37,26 @@ public class RackController {
 	}
 	
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<Object> getById(@PathVariable(value = "id") Integer id){
+		
+		
+		Optional<Rack> rackOptional = rackRepository.findById(id);
+		
+		
+		if(!rackOptional.isPresent()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rack Not Found!");
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(rackOptional.get());
+	}
+	
+	
 	@PostMapping
 	public ResponseEntity<Object> save(@RequestBody RackDTO rackDTO){
 			
-			Optional<Unidade> unidadeOptional = unidadeRepository.findById(rackDTO.getId_unidade());
+		try {	
+		Optional<Unidade> unidadeOptional = unidadeRepository.findById(rackDTO.getId_unidade());
 			
 			if(!unidadeOptional.isPresent()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Unidade Not Found!");
@@ -51,10 +68,18 @@ public class RackController {
 			
 			BeanUtils.copyProperties(rackDTO, rack);
 			
+			unidade.getRacks().add(rack);
+			
 			rack.setUnidade(unidade);
+			
+			//unidadeRepository.save(unidade);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(rackRepository.save(rack));
 		
+		}catch (Exception e) {
+
+			return ResponseEntity.status(HttpStatus.OK).body("Erro ao inserir o Rack: " + e.getMessage());
+		}
 		}
 	
 }

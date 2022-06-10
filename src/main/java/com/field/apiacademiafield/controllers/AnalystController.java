@@ -93,7 +93,47 @@ public class AnalystController {
 			
 			
 		}
+	
 		
+	
+	@PostMapping("/login")
+	public ResponseEntity<Object> loginAnalyst(@RequestBody Analyst analyst){
+		
+		Analyst analystLogin = repository.findByIdCorporate(analyst.getIdCorporate());
+	
+		
+		if(analystLogin == null)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Analyst Not Found!");
+		
+		if(!(analystLogin.getPassword().toString()).equals(analyst.getPassword().toString()))
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Password or user not Found:");
+		
+		
+		if((analystLogin.getPassword().toString()).equals(analystLogin.getIdCorporate()))
+			return ResponseEntity.status(HttpStatus.OK).body("New Password");
+	
+	
+		return ResponseEntity.status(HttpStatus.OK).body(analystLogin);
+		
+	}
+	
+	
+	@PutMapping("/newPassword/{id}")
+	public ResponseEntity<Object> insertNewPassword(@PathVariable(value = "id") Integer id, @RequestBody Analyst analystPassword){
+			
+			Optional<Analyst> optional = repository.findById(id);
+			
+			if(!optional.isPresent()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Analyst Not Found!");
+			}
+			
+			Analyst analyst = optional.get();
+				
+			analyst.setPassword(analystPassword.getPassword());
+			
+			return ResponseEntity.status(HttpStatus.OK).body(repository.save(analyst));
+			
+		}
 	
 	
 	

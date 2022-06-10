@@ -1,6 +1,8 @@
 package com.field.apiacademiafield.models;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -53,6 +56,20 @@ public class Switch {
 	
 	@ManyToOne
 	private Rack rack;
+	
+	@OneToMany(mappedBy = "myswitch")
+	private List<EvidenciaSwitch> evidenciaSwitchs;
+	
+	
+	
+	
+	public List<EvidenciaSwitch> getEvidenciaSwitchs() {
+		return converter(evidenciaSwitchs);
+	}
+
+	public void setEvidenciaSwitchs(List<EvidenciaSwitch> evidenciaSwitchs) {
+		this.evidenciaSwitchs = evidenciaSwitchs;
+	}
 
 	public Integer getId() {
 		return id;
@@ -151,6 +168,23 @@ public class Switch {
 	}
 	
 	
+	
+public static List<EvidenciaSwitch> converter(List<EvidenciaSwitch> evidenciaSwitchs) {
+        
+		List<EvidenciaSwitch> switchOnlytEvidencia = new ArrayList<EvidenciaSwitch>();
+        
+        for (EvidenciaSwitch evidenciaSwitch : evidenciaSwitchs) {
+			
+        	EvidenciaSwitch evidenciSwitchProvisorio = new EvidenciaSwitch();
+        	evidenciSwitchProvisorio.setId(evidenciaSwitch.getId());        	
+        
+        	switchOnlytEvidencia.add(evidenciSwitchProvisorio);
+        	
+		}
+        
+        return switchOnlytEvidencia;
+		
+    }
 	
 	
 }
