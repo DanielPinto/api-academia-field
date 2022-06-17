@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.field.apiacademiafield.dtos.InsertUnidadeForAnalyst;
 import com.field.apiacademiafield.models.Analyst;
+import com.field.apiacademiafield.models.MessageResponse;
 import com.field.apiacademiafield.models.Unidade;
 import com.field.apiacademiafield.repositories.AnalystRepository;
 import com.field.apiacademiafield.repositories.UnidadeRepository;
@@ -100,17 +101,13 @@ public class AnalystController {
 	public ResponseEntity<Object> loginAnalyst(@RequestBody Analyst analyst){
 		
 		Analyst analystLogin = repository.findByIdCorporate(analyst.getIdCorporate());
-	
 		
-		if(analystLogin == null)
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Analyst Not Found!");
-		
-		if(!(analystLogin.getPassword().toString()).equals(analyst.getPassword().toString()))
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Password or user not Found:");
+		if( analystLogin == null || !(analystLogin.getPassword().toString()).equals(analyst.getPassword().toString()))
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("404","Password or user not Found:",null));
 		
 		
 		if((analystLogin.getPassword().toString()).equals(analystLogin.getIdCorporate()))
-			return ResponseEntity.status(HttpStatus.OK).body("New Password");
+			return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("NEW PASSWORD","new password!",analystLogin));
 	
 	
 		return ResponseEntity.status(HttpStatus.OK).body(analystLogin);
@@ -134,7 +131,5 @@ public class AnalystController {
 			return ResponseEntity.status(HttpStatus.OK).body(repository.save(analyst));
 			
 		}
-	
-	
 	
 }
